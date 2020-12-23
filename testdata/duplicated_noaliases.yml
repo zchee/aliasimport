@@ -1,0 +1,4 @@
+---
+noaliases:
+  - github.com/gostaticanalysis/testutil
+  - github.com/gostaticanalysis/testutil

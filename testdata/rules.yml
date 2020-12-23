@@ -1,0 +1,6 @@
+---
+aliases:
+  grpc_retry: github.com/grpc-ecosystem/go-grpc-middleware/retry
+  pkgerr: "github.com/pkg/errors"  # quoted
+noaliases:
+  - gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer
