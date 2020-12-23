@@ -1,0 +1,5 @@
+---
+aliases:
+  pkgerr: github.com/pkg/errors
+noaliases:
+  - github.com/pkg/errors
