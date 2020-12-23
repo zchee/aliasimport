@@ -95,11 +95,11 @@ Licensed under the MIT License.
 [test]: https://github.com/iwata/aliasimport/actions?query=workflow%3A%22test+and+coverage%22
 [reviewdog]: https://github.com/iwata/aliasimport/actions?query=workflow%3Areviewdog
 [codecov]: https://codecov.io/gh/iwata/aliasimport
-[pkg.go.dev]: https://pkg.go.dev/iwata/aliasimport
+[pkg.go.dev]: https://pkg.go.dev/github.com/iwata/aliasimport
 [release]: https://github.com/iwata/aliasimport/releases/latest
 
 [test-badge]: https://github.com/iwata/aliasimport/workflows/test%20and%20coverage/badge.svg
 [reviewdog-badge]: https://github.com/iwata/aliasimport/workflows/reviewdog/badge.svg
 [codecov-badge]: https://codecov.io/gh/iwata/aliasimport/branch/main/graph/badge.svg?token=yOEEZZqDse
-[pkg.go.dev-badge]: https://pkg.go.dev/badge/iwata/aliasimport
+[pkg.go.dev-badge]: https://pkg.go.dev/badge/github.com/iwata/aliasimport.svg
 [release-badge]: https://img.shields.io/github/release/iwata/aliasimport.svg?style=flat&logo=github
