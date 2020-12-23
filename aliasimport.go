@@ -2,14 +2,11 @@ package aliasimport
 
 import (
 	"fmt"
-	"go/ast"
 	"io/ioutil"
 
 	"github.com/goccy/go-yaml"
 	"github.com/gostaticanalysis/analysisutil"
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/passes/inspect"
-	"golang.org/x/tools/go/ast/inspector"
 )
 
 var ruleYAML string
@@ -26,9 +23,6 @@ var Analyzer = &analysis.Analyzer{
 	Name: "aliasimport",
 	Doc:  doc,
 	Run:  run,
-	Requires: []*analysis.Analyzer{
-		inspect.Analyzer,
-	},
 }
 
 type rule struct {
@@ -89,46 +83,33 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		return nil, err
 	}
 
-	ins := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-
-	nodeFilter := []ast.Node{
-		(*ast.ImportSpec)(nil),
-	}
-
 	// support false positive comments
 	pass.Report = analysisutil.ReportWithoutIgnore(pass)
 
-	ins.Preorder(nodeFilter, func(n ast.Node) {
-		var (
-			is                      = n.(*ast.ImportSpec)
-			p                       = is.Path.Value
-			validAlias, shouldAlias = rules.Aliases[p]
-			_, shouldNoAlias        = rules.NoAliases[p]
-		)
+	for _, f := range pass.Files {
+		for _, i := range f.Imports {
+			var (
+				p                       = i.Path.Value
+				validAlias, shouldAlias = rules.Aliases[p]
+				_, shouldNoAlias        = rules.NoAliases[p]
+			)
 
-		// not matched any rules
-		if !shouldAlias && !shouldNoAlias {
-			return
-		}
-
-		// no aliases
-		if is.Name == nil {
-			if shouldAlias {
-				pass.Reportf(is.Pos(), "the package %s should be imported with the alias name %s", p, validAlias)
+			if shouldAlias || shouldNoAlias {
+				if i.Name == nil { // no aliases
+					if shouldAlias {
+						pass.Reportf(i.Pos(), "the package %s should be imported with the alias name %s", p, validAlias)
+					}
+				} else {
+					a := i.Name.Name
+					if shouldNoAlias {
+						pass.Reportf(i.Pos(), "the package %s shouldn't be imported with any aliases, but with %s", p, i.Name)
+					} else if a != validAlias {
+						pass.Reportf(i.Pos(), "the alias name of %s should be %s, not %s", p, validAlias, a)
+					}
+				}
 			}
-			return // shouldNoAlias
 		}
-
-		if shouldNoAlias {
-			pass.Reportf(is.Pos(), "the package %s shouldn't be imported with any aliases, but with %s", p, is.Name)
-			return
-		}
-
-		a := is.Name.Name
-		if a != validAlias {
-			pass.Reportf(is.Pos(), "the alias name of %s should be %s, not %s", p, validAlias, a)
-		}
-	})
+	}
 
 	return nil, nil
 }
