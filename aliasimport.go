@@ -99,13 +99,12 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	pass.Report = analysisutil.ReportWithoutIgnore(pass)
 
 	ins.Preorder(nodeFilter, func(n ast.Node) {
-		is, ok := n.(*ast.ImportSpec)
-		if !ok {
-			return
-		}
-		p := is.Path.Value
-		validAlias, shouldAlias := rules.Aliases[p]
-		_, shouldNoAlias := rules.NoAliases[p]
+		var (
+			is                      = n.(*ast.ImportSpec)
+			p                       = is.Path.Value
+			validAlias, shouldAlias = rules.Aliases[p]
+			_, shouldNoAlias        = rules.NoAliases[p]
+		)
 
 		// not matched any rules
 		if !shouldAlias && !shouldNoAlias {
